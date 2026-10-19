@@ -5,6 +5,7 @@ import { pageMetadata } from "@/lib/seo";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { BenefitsStrip, CtaBand, HowItWorks, OfferStrip, PricingGrid, ServiceCard } from "@/components/site/sections";
 import { AreasStrip, CompareSection, FaqPreview, IncludedSection, WhyCleanSection } from "@/components/site/home-sections";
+import { HeroWash } from "@/components/site/HeroWash";
 import { QuickBookForm } from "@/components/booking/QuickBookForm";
 import { telHref } from "@/components/site/nav";
 
@@ -20,15 +21,17 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative -mt-[72px] overflow-hidden pt-[72px] sm:-mt-20 sm:pt-20">
+      {/* Hero: starts dirty, scrolling "pressure washes" it clean */}
+      <div className="-mt-[72px] sm:-mt-20">
+      <HeroWash>
+      <section className="relative flex h-full min-h-[560px] flex-col overflow-hidden pt-[72px] sm:min-h-[600px] sm:pt-20">
         <div className="absolute inset-0 lg:left-[38%]">
           <SafeImage src={c.heroImage} alt={c.heroImageAlt} fill priority sizes="(min-width: 1024px) 62vw, 100vw" className="object-cover object-[60%_center] animate-fade" />
           {/* Blend into the dark left side while keeping the photo visible */}
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/30 lg:bg-gradient-to-r lg:from-ink lg:via-ink/55 lg:to-transparent" />
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink to-transparent" />
         </div>
-        <div className="container-x relative flex min-h-[560px] items-end pb-12 pt-28 sm:min-h-[600px] lg:min-h-[640px] lg:items-center lg:pb-16 lg:pt-12">
+        <div className="container-x relative flex flex-1 items-end pb-12 pt-16 lg:items-center lg:pb-16 lg:pt-12">
           <div className="max-w-xl animate-rise">
             <span className="eyebrow">{c.eyebrow}</span>
             <h1 className="mt-5 font-display text-[2.9rem] font-black leading-[0.98] tracking-tight sm:text-6xl lg:text-[4.4rem]">
@@ -47,6 +50,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+      </HeroWash>
+      </div>
 
       <BenefitsStrip
         items={[
