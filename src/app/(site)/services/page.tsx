@@ -56,7 +56,7 @@ export default async function ServicesPage() {
       <section className="section-rule py-14 sm:py-16" aria-labelledby="svc-pricing">
         <div className="container-x">
           <div id="svc-pricing">
-            <SectionHeading title={home.pricingTitle} accent={home.pricingTitleAccent} subtitle={home.pricingSubtitle} />
+            <SectionHeading title={home.planTitle} accent={home.planAccent} subtitle={home.planSubtitle} />
           </div>
           <PricingGrid plans={plans} />
           <p className="mt-4 text-center text-sm">

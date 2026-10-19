@@ -47,7 +47,7 @@ export default async function AboutPage() {
       </section>
 
       <div className="section-rule" />
-      <HowItWorks title={home.stepsTitle} accent={home.stepsTitleAccent} subtitle={home.stepsSubtitle} />
+      <HowItWorks title={home.howTitle} accent={home.howAccent} subtitle={home.howSubtitle} />
       <ServiceAreas areas={settings.serviceAreas} title={c.areasTitle} />
       <CtaBand />
     </>

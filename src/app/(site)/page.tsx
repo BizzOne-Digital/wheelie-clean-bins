@@ -24,34 +24,35 @@ export default async function HomePage() {
       {/* Hero: starts dirty, scrolling "pressure washes" it clean */}
       <div className="-mt-[72px] sm:-mt-20">
       <HeroWash>
-      <section className="relative flex h-full min-h-[600px] flex-col overflow-hidden pt-[72px] sm:pt-20">
-        {/* Dim photo + subtle grid behind the oversized headline */}
-        <div className="absolute inset-0">
-          <SafeImage src={c.heroImage} alt={c.heroImageAlt} fill priority sizes="100vw" className="object-cover object-[70%_center] opacity-35" />
-          <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/60" />
-          <div className="absolute inset-0 opacity-[0.07] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:64px_64px]" />
+      <section className="relative flex min-h-[100svh] flex-col overflow-hidden pt-[72px] sm:pt-20">
+        {/* Glow + subtle grid behind the content */}
+        <div className="absolute inset-0" aria-hidden>
+          <div className="absolute -right-40 top-1/4 h-[620px] w-[620px] rounded-full bg-cyan/15 blur-[120px]" />
+          <div className="absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-brand/10 blur-[120px]" />
+          <div className="absolute inset-0 opacity-[0.06] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:64px_64px]" />
         </div>
-        <div className="relative flex flex-1 flex-col justify-between gap-8 px-4 pb-10 pt-10 sm:px-8 lg:px-[8vw] lg:pb-14 lg:pt-14">
-          <h1 className="animate-rise font-display font-black uppercase leading-[0.9] tracking-[-0.03em] text-[clamp(3rem,10.5vw,10rem)]">
-            <span className="block text-white">{c.heroBig1}</span>
-            <span className="block">
-              <span className="text-ink [paint-order:stroke_fill] [-webkit-text-stroke:4px_#fff] sm:[-webkit-text-stroke:6px_#fff]">{c.heroBig2}</span>{" "}
-              <span className="text-cyan">{c.heroBig3}</span>
-            </span>
-            <span className="block text-white">{c.heroBig4}</span>
-          </h1>
-          <div className="max-w-xl">
-            <p className="whitespace-pre-line text-lg leading-snug text-soft sm:text-2xl">{c.heroText}</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/booking" className="btn btn-primary btn-lg rounded-full">
-                Book My First Clean <ArrowRight className="h-5 w-5" aria-hidden />
+        <div className="container-x relative z-[1] flex flex-1 items-center pb-6 pt-10 lg:pb-16">
+          <div className="max-w-xl animate-rise lg:max-w-[46%]">
+            <p className="font-display text-sm font-bold uppercase tracking-[0.18em] text-cyan">{c.heroKicker}</p>
+            <h1 className="mt-4 font-display font-black leading-[0.95] tracking-[-0.03em] text-[clamp(2.7rem,5.2vw,5.4rem)]">
+              <span className="block text-white">{c.heroTitle1}</span>
+              <span className="block text-brand">{c.heroTitle2}</span>
+            </h1>
+            <p className="mt-6 max-w-lg text-lg leading-relaxed text-soft sm:text-xl">{c.heroIntro}</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/pricing" className="btn btn-primary btn-lg rounded-full">
+                Explore Cleaning Plans <ArrowRight className="h-5 w-5" aria-hidden />
               </Link>
-              <Link href="/pricing" className="btn btn-outline btn-lg rounded-full">
-                View Plans
+              <Link href="/booking" className="btn btn-outline btn-lg rounded-full">
+                Book My First Clean
               </Link>
             </div>
+            <p className="mt-6 text-sm text-muted">{c.heroTrust}</p>
           </div>
+        </div>
+        {/* Mascot: below the copy on mobile, lower-right on desktop */}
+        <div className="relative mx-auto h-[280px] w-full max-w-md sm:h-[360px] lg:absolute lg:bottom-0 lg:right-[2%] lg:mx-0 lg:h-[82%] lg:w-[50%] lg:max-w-none">
+          <SafeImage src={c.heroMascot} alt={c.heroMascotAlt} fill priority sizes="(min-width: 1024px) 50vw, 448px" className="animate-fade object-contain object-bottom" />
         </div>
       </section>
       </HeroWash>
@@ -65,9 +66,9 @@ export default async function HomePage() {
         ]}
       />
 
-      <HowItWorks title={c.stepsTitle} accent={c.stepsTitleAccent} subtitle={c.stepsSubtitle} />
+      <HowItWorks title={c.howTitle} accent={c.howAccent} subtitle={c.howSubtitle} />
 
-      <WhyCleanSection />
+      <WhyCleanSection title={c.whyTitle} accent={c.whyAccent} subtitle={c.whySubtitle} />
       <CompareSection />
 
       {/* Pricing preview */}
@@ -75,12 +76,12 @@ export default async function HomePage() {
         <div className="container-x">
           <div id="pricing-heading" className="mx-auto max-w-2xl text-center">
             <h2 className="font-display text-[1.9rem] font-extrabold leading-tight sm:text-4xl">
-              {c.pricingTitle} <span className="text-cyan">{c.pricingTitleAccent}</span>
+              {c.planTitle} <span className="text-cyan">{c.planAccent}</span>
             </h2>
-            <p className="mt-2 text-soft/85">{c.pricingSubtitle}</p>
+            <p className="mt-2 text-soft/85">{c.planSubtitle}</p>
           </div>
-          <PricingGrid plans={plans} />
-          <p className="mt-4 text-center text-sm text-soft/85">Pay monthly or choose 3, 6 or 12 months upfront.</p>
+          <PricingGrid plans={plans} features={c.planFeatures.split("\n").map((l) => l.trim()).filter(Boolean)} />
+          <p className="mt-4 text-center text-sm text-soft/85">Pay monthly or choose 3, 6 or 12 months upfront. {c.planBinNote}</p>
           {settings.billing.annualPromoEnabled && <OfferStrip title={pricing.promoTitle} text={pricing.promoText} />}
         </div>
       </section>

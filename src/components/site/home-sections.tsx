@@ -1,22 +1,22 @@
 import Link from "next/link";
-import { ArrowRight, Bug, Check, CircleDollarSign, Clock, Droplets, HelpCircle, MapPin, Wind, X } from "lucide-react";
+import { ArrowRight, Check, PawPrint, CircleDollarSign, Clock, Droplets, HelpCircle, MapPin, Wind, X } from "lucide-react";
 import type { FaqData } from "@/lib/defaults";
 import { SectionHeading } from "./sections";
 
 /* Why clean your bins --------------------------------------------------------- */
 const REASONS = [
-  { icon: Wind, title: "Fewer odours", text: "Leftover residue in a bin can smell, especially in warm weather. A regular clean keeps that in check." },
-  { icon: Bug, title: "Less attraction for pests", text: "Food residue can draw flies, insects and animals. A clean, deodorized bin gives them less reason to visit." },
-  { icon: Droplets, title: "A cleaner curb", text: "Sticky build-up and spills stay off your driveway and out of your garage." },
-  { icon: Clock, title: "Your time back", text: "No hosing out bins, no dirty water, no scrubbing. We take the job off your list every month." },
+  { icon: Wind, title: "Odour Control", text: "Help eliminate lingering waste odours and keep unpleasant smells under control." },
+  { icon: Droplets, title: "Professional Deep Cleaning", text: "High-pressure cleaning and hot water help remove stubborn grime, residue, and buildup." },
+  { icon: PawPrint, title: "A Cleaner Outdoor Space", text: "Regular bin maintenance helps reduce residue and conditions that attract unwanted pests." },
+  { icon: Clock, title: "Convenience on Autopilot", text: "Recurring service means one less household chore to remember. No need to be home." },
 ];
 
-export function WhyCleanSection() {
+export function WhyCleanSection({ title, accent, subtitle }: { title: string; accent: string; subtitle: string }) {
   return (
     <section className="section-rule bg-ink-2 py-14 sm:py-16" aria-labelledby="why-heading">
       <div className="container-x">
         <div id="why-heading">
-          <SectionHeading title="Why clean" accent="your bins?" subtitle="A small monthly habit that makes a real difference at home." />
+          <SectionHeading title={title} accent={accent} subtitle={subtitle} />
         </div>
         <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {REASONS.map((r) => (

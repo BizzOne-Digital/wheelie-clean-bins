@@ -128,6 +128,7 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
       canvas.style.transition = "opacity 700ms ease";
       canvas.style.opacity = "0";
       nozzle.style.opacity = "0";
+      hint.style.opacity = "0";
       stage.style.cursor = "";
     }
 
@@ -198,7 +199,7 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
   return (
     <div
       ref={stageRef}
-      className={`relative ${enabled ? "h-[100svh] min-h-[600px] touch-pan-y overflow-hidden [@media(hover:hover)]:cursor-none" : ""}`}
+      className={`relative ${enabled ? "min-h-[100svh] touch-pan-y overflow-hidden [@media(hover:hover)]:cursor-none" : ""}`}
     >
       {children}
       <canvas ref={canvasRef} aria-hidden className={`pointer-events-none absolute inset-0 z-10 h-full w-full ${enabled ? "" : "hidden"}`} />

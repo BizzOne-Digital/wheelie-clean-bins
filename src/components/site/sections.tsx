@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   ArrowRight,
   CalendarDays,
+  Check,
   Droplet,
   Gift,
   Home as HomeIcon,
@@ -109,9 +110,9 @@ export function BenefitsStrip({ items }: { items: { title: string; text: string 
 
 /* How it works -------------------------------------------------------------- */
 const STEPS = [
-  { icon: CalendarDays, title: "Choose your plan", text: "Pick the plan that works for your home." },
-  { icon: Truck, title: "We clean on collection day", text: "We arrive, clean your bins at the curb, and get to work." },
-  { icon: Sparkles, title: "We return your bins", text: "Spotlessly clean, fresh and ready for your week." },
+  { icon: CalendarDays, title: "Choose Your Plan", text: "Select the subscription that suits your household, with convenient recurring service to keep your bins consistently clean." },
+  { icon: Truck, title: "We Clean After Collection", text: "Once your bins have been emptied, we clean them curbside using high-pressure technology and hot water for a thorough clean." },
+  { icon: Sparkles, title: "Enjoy the Difference", text: "Your bins are left cleaner, fresher, and ready for their next use, all without you needing to be home." },
 ];
 
 export function HowItWorks({ title, accent, subtitle }: { title: string; accent: string; subtitle: string }) {
@@ -121,22 +122,18 @@ export function HowItWorks({ title, accent, subtitle }: { title: string; accent:
         <div id="how-heading">
           <SectionHeading title={title} accent={accent} subtitle={subtitle} />
         </div>
-        <ol className="mt-10 grid gap-6 md:grid-cols-3 md:gap-4">
+        <ol className="mt-10 grid gap-5 md:grid-cols-3">
           {STEPS.map((s, i) => (
-            <li key={s.title} className="relative flex items-start gap-4 md:items-center">
-              <span className="icon-ring h-14 w-14 font-display text-2xl font-extrabold" aria-hidden>
-                {i + 1}
+            <li key={s.title} className="card relative p-6 transition-colors hover:border-cyan">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan/15 text-cyan" aria-hidden>
+                <s.icon className="h-6 w-6" strokeWidth={1.8} />
               </span>
-              <s.icon className="mt-2 h-9 w-9 shrink-0 text-white md:mt-0" strokeWidth={1.6} aria-hidden />
-              <div className="min-w-0">
-                <h3 className="font-display text-[1.02rem] font-bold">
-                  <span className="sr-only">Step {i + 1}: </span>
-                  {s.title}
-                </h3>
-                <p className="mt-0.5 text-sm text-soft/80">{s.text}</p>
-              </div>
+              <h3 className="mt-4 font-display text-lg font-bold">
+                {i + 1}. {s.title}
+              </h3>
+              <p className="mt-1.5 text-sm text-soft/85">{s.text}</p>
               {i < STEPS.length - 1 && (
-                <ArrowRight className="absolute -right-3 top-1/2 hidden h-5 w-5 -translate-y-1/2 text-muted lg:block" aria-hidden />
+                <ArrowRight className="absolute -right-4 top-1/2 z-10 hidden h-5 w-5 -translate-y-1/2 text-cyan md:block" aria-hidden />
               )}
             </li>
           ))}
@@ -147,7 +144,7 @@ export function HowItWorks({ title, accent, subtitle }: { title: string; accent:
 }
 
 /* Pricing ------------------------------------------------------------------- */
-export function PricingCard({ plan, cta = "Choose Plan" }: { plan: PlanData; cta?: string }) {
+export function PricingCard({ plan, cta = "Choose Plan", features = [] }: { plan: PlanData; cta?: string; features?: string[] }) {
   const yellow = plan.accent === "yellow";
   const [dollars, cents] = (plan.monthlyPriceCents / 100).toFixed(2).split(".");
   return (
@@ -170,6 +167,15 @@ export function PricingCard({ plan, cta = "Choose Plan" }: { plan: PlanData; cta
       <div className="my-5 border-t border-line-strong" />
       <p className="font-display text-xl font-semibold text-white">Up to {plan.includedBins} bins</p>
       <p className="text-sm text-soft/85">Additional bins {formatCents(plan.extraBinCents, { compact: true })} each</p>
+      {features.length > 0 && (
+        <ul className="mt-5 space-y-2 border-t border-line pt-5 text-left text-sm">
+          {features.map((ft) => (
+            <li key={ft} className="flex items-start gap-2.5 text-soft">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-cyan" aria-hidden /> {ft}
+            </li>
+          ))}
+        </ul>
+      )}
       <Link href={`/booking?plan=${encodeURIComponent(plan.key)}`} className="btn btn-primary btn-md mt-5 w-full">
         {cta} <ArrowRight className="h-4 w-4" aria-hidden />
         <span className="sr-only"> for {plan.name}</span>
@@ -178,11 +184,11 @@ export function PricingCard({ plan, cta = "Choose Plan" }: { plan: PlanData; cta
   );
 }
 
-export function PricingGrid({ plans }: { plans: PlanData[] }) {
+export function PricingGrid({ plans, features }: { plans: PlanData[]; features?: string[] }) {
   return (
     <div className="mx-auto mt-8 grid max-w-4xl gap-5 md:grid-cols-2 md:gap-6">
       {plans.map((p) => (
-        <PricingCard key={p.key} plan={p} />
+        <PricingCard key={p.key} plan={p} features={features} />
       ))}
     </div>
   );
