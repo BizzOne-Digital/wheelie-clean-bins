@@ -12,6 +12,7 @@ import { Hand, MousePointer2 } from "lucide-react";
 export function HeroWash({ children }: { children: React.ReactNode }) {
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const dropsRef = useRef<HTMLCanvasElement>(null);
   const nozzleRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
   const [enabled, setEnabled] = useState(false);
@@ -29,6 +30,52 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
     const nozzle = nozzleRef.current!;
+    const dropsCanvas = dropsRef.current!;
+    const dctx = dropsCanvas.getContext("2d")!;
+    type Drop = { x: number; y: number; vx: number; vy: number; r: number; life: number };
+    let drops: Drop[] = [];
+    let dropRaf = 0;
+
+    // Water droplets that spray from the nozzle tip and fall with gravity.
+    function spray(x: number, y: number, speed: number) {
+      const count = Math.min(7, 2 + Math.floor(speed / 8));
+      for (let i = 0; i < count && drops.length < 260; i++) {
+        drops.push({
+          x: x + dir * 6,
+          y: y + (Math.random() - 0.5) * 20,
+          vx: dir * (2 + Math.random() * 5) + (Math.random() - 0.5) * 2,
+          vy: -1.5 - Math.random() * 3.5,
+          r: 1.5 + Math.random() * 3,
+          life: 1,
+        });
+      }
+      if (!dropRaf) dropRaf = requestAnimationFrame(tickDrops);
+    }
+
+    function tickDrops() {
+      dropRaf = 0;
+      dctx.clearRect(0, 0, w, h);
+      drops = drops.filter((d) => d.life > 0 && d.y < h + 10);
+      for (const d of drops) {
+        d.vy += 0.28;
+        d.vx *= 0.98;
+        d.x += d.vx;
+        d.y += d.vy;
+        d.life -= 0.018;
+        dctx.globalAlpha = Math.max(0, d.life);
+        dctx.fillStyle = "#7fe3ff";
+        dctx.beginPath();
+        dctx.ellipse(d.x, d.y, d.r * 0.8, d.r * 1.25, Math.atan2(d.vy, d.vx) + Math.PI / 2, 0, Math.PI * 2);
+        dctx.fill();
+        dctx.globalAlpha = Math.max(0, d.life) * 0.9;
+        dctx.fillStyle = "#ffffff";
+        dctx.beginPath();
+        dctx.arc(d.x - d.r * 0.3, d.y - d.r * 0.4, d.r * 0.3, 0, Math.PI * 2);
+        dctx.fill();
+      }
+      dctx.globalAlpha = 1;
+      if (drops.length) dropRaf = requestAnimationFrame(tickDrops);
+    }
     const hint = hintRef.current!;
 
     let w = 0;
@@ -147,6 +194,7 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
         hint.style.opacity = "0";
       }
       washLine(last ?? p, p);
+      spray(p.x, p.y, last ? Math.hypot(p.x - last.x, p.y - last.y) : 0);
       last = p;
       nozzle.style.opacity = "1";
       moveNozzle(p.x, p.y);
@@ -166,6 +214,9 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      dropsCanvas.width = Math.round(w * dpr);
+      dropsCanvas.height = Math.round(h * dpr);
+      dctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       paintGrime();
       for (const s of strokes) stamp(s.x * w, s.y * h);
     }
@@ -188,6 +239,7 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
     return () => {
       ro.disconnect();
       io.disconnect();
+      if (dropRaf) cancelAnimationFrame(dropRaf);
       stage.removeEventListener("pointermove", onMove);
       stage.removeEventListener("pointerdown", onMove);
       stage.removeEventListener("pointerleave", onLeave);
@@ -205,6 +257,7 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
       <canvas ref={canvasRef} aria-hidden className={`pointer-events-none absolute inset-0 z-10 h-full w-full ${enabled ? "" : "hidden"}`} />
       {enabled && (
         <>
+          <canvas ref={dropsRef} aria-hidden className="pointer-events-none absolute inset-0 z-20 h-full w-full" />
           {/* Pressure-washer nozzle that follows the pointer */}
           <div ref={nozzleRef} aria-hidden className="pointer-events-none absolute left-0 top-0 z-20 transition-opacity duration-200 will-change-transform" style={{ opacity: 0 }}>
             <svg width="250" height="120" viewBox="-30 0 250 120" className="-translate-x-[54px] -translate-y-[60px] drop-shadow-[0_6px_18px_rgba(0,189,232,0.45)]">

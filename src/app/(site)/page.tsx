@@ -34,10 +34,16 @@ export default async function HomePage() {
         <div className="container-x relative z-[1] flex flex-1 items-center pb-6 pt-10 lg:pb-16">
           <div className="max-w-xl animate-rise lg:max-w-[46%]">
             <p className="font-display text-sm font-bold uppercase tracking-[0.18em] text-cyan">{c.heroKicker}</p>
-            <h1 className="mt-4 font-display font-black leading-[0.95] tracking-[-0.03em] text-[clamp(2.7rem,5.2vw,5.4rem)]">
+            <h1 className="mt-4 font-display font-black leading-[0.95] tracking-[-0.03em] text-[clamp(3rem,5.2vw,5.4rem)]">
               <span className="block text-white">{c.heroTitle1}</span>
               <span className="block text-brand">{c.heroTitle2}</span>
             </h1>
+            {/* Mobile/tablet: mascot sits between the headline and the copy */}
+            <div className="relative mx-auto mt-6 h-[300px] w-full max-w-md sm:h-[380px] lg:hidden">
+              <div className="relative h-full w-full animate-float">
+                <SafeImage src={c.heroMascot} alt={c.heroMascotAlt} fill priority sizes="448px" className="object-contain object-bottom" />
+              </div>
+            </div>
             <p className="mt-6 max-w-lg text-lg leading-relaxed text-soft sm:text-xl">{c.heroIntro}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/pricing" className="btn btn-primary btn-lg rounded-full">
@@ -50,12 +56,31 @@ export default async function HomePage() {
             <p className="mt-6 text-sm text-muted">{c.heroTrust}</p>
           </div>
         </div>
-        {/* Mascot: below the copy on mobile, lower-right on desktop */}
-        <div className="relative mx-auto h-[280px] w-full max-w-md sm:h-[360px] lg:absolute lg:bottom-0 lg:right-[2%] lg:mx-0 lg:h-[82%] lg:w-[50%] lg:max-w-none">
-          <SafeImage src={c.heroMascot} alt={c.heroMascotAlt} fill priority sizes="(min-width: 1024px) 50vw, 448px" className="animate-fade object-contain object-bottom" />
+        {/* Desktop: mascot lower-right */}
+        <div className="absolute bottom-6 right-[2%] hidden h-[80%] w-[50%] lg:block" aria-hidden>
+          <div className="relative h-full w-full animate-float">
+            <SafeImage src={c.heroMascot} alt="" fill sizes="50vw" className="object-contain object-bottom" />
+          </div>
         </div>
       </section>
       </HeroWash>
+      </div>
+
+      {/* Service-area ticker */}
+      <div className="relative z-[1] -my-2 overflow-hidden py-6" aria-label={`Serving ${settings.serviceAreas.join(", ")}`}>
+        <div className="-rotate-2 bg-brand py-3 shadow-[0_10px_30px_-10px_rgba(255,229,0,0.5)]">
+          <div className="flex w-max animate-marquee" aria-hidden>
+            {[0, 1].map((k) => (
+              <ul key={k} className="flex shrink-0 items-center">
+                {[...settings.serviceAreas, ...settings.serviceAreas].map((a, i) => (
+                  <li key={i} className="flex items-center gap-6 px-6 font-display text-2xl font-black uppercase tracking-tight text-ink sm:text-3xl">
+                    <span className="text-xl">✦</span> {a}
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
+        </div>
       </div>
 
       <BenefitsStrip
