@@ -221,22 +221,25 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
       for (const s of strokes) stamp(s.x * w, s.y * h);
     }
 
-    /* ---------- Touch devices: scrolling drives the nozzle along a zig-zag path ---------- */
+    /* ---------- Touch devices: swiping up washes the hero; the page stays put until it is clean ---------- */
     const scrollMode = window.matchMedia("(hover: none)").matches;
     let washedT = 0;
     let scrollRaf = 0;
+    let pendingT = 0;
+    let touchY: number | null = null;
 
     function pathPoint(t: number) {
-      // Zig-zag rows roughly 110px apart covering the whole hero, top to bottom.
-      const rows = Math.max(4, Math.round(h / 110));
+      // Zig-zag rows covering the part of the hero visible on screen.
+      const H = Math.min(h, window.innerHeight);
+      const rows = Math.max(4, Math.round(H / 110));
       const padX = w * 0.06;
-      const span = w - padX * 2;
-      const rowLen = span;
-      const drop = (h * 0.92) / (rows - 1);
+      const rowLen = w - padX * 2;
+      const top = Math.min(90, H * 0.1);
+      const drop = (H - top - 30) / (rows - 1);
       const total = rows * rowLen + (rows - 1) * drop;
       let d = Math.min(Math.max(t, 0), 1) * total;
       for (let r = 0; r < rows; r++) {
-        const y = h * 0.04 + r * drop;
+        const y = top + r * drop;
         const ltr = r % 2 === 0;
         if (d <= rowLen) return { x: ltr ? padX + d : w - padX - d, y, dir: ltr ? -1 : 1 };
         d -= rowLen;
@@ -245,19 +248,13 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
           d -= drop;
         }
       }
-      return { x: padX, y: h * 0.96, dir: 1 };
-    }
-
-    function scrollProgress() {
-      const rect = stage.getBoundingClientRect();
-      const range = Math.max(1, h - window.innerHeight * 0.55);
-      return Math.min(Math.max(-rect.top / range, 0), 1);
+      return { x: padX, y: H - 30, dir: 1 };
     }
 
     function onScrollFrame() {
       scrollRaf = 0;
       if (done) return;
-      const t = scrollProgress();
+      const t = pendingT;
       if (t > washedT) {
         const steps = Math.max(1, Math.ceil((t - washedT) * 120));
         let prev = pathPoint(washedT);
@@ -266,7 +263,6 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
           washLine(prev, p);
           prev = p;
         }
-        dir = prev.dir;
         spray(prev.x, prev.y, 20);
         washedT = t;
         if (!started) {
@@ -278,11 +274,40 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
       dir = p.dir;
       nozzle.style.opacity = "1";
       moveNozzle(p.x, p.y);
-      if (washedT >= 0.98 || cleaned.size / (COLS * ROWS) > 0.85) finish();
+      if (washedT >= 0.995) finish();
     }
 
-    const onScroll = () => {
+    // Lock page scrolling only while the hero is at the top of the page and still dirty.
+    const locked = () => !done && window.scrollY < 40;
+
+    function advance(delta: number) {
+      if (delta <= 0) return;
+      pendingT = Math.min(1, pendingT + delta / (window.innerHeight * 2.2));
       if (!scrollRaf) scrollRaf = requestAnimationFrame(onScrollFrame);
+    }
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchY = e.touches[0]?.clientY ?? null;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (!locked()) return;
+      const y = e.touches[0]?.clientY;
+      if (y == null || touchY == null) return;
+      const dy = touchY - y;
+      touchY = y;
+      if (dy > 0) {
+        e.preventDefault();
+        advance(dy);
+      }
+    };
+    const onWheel = (e: WheelEvent) => {
+      if (!locked() || e.deltaY <= 0) return;
+      e.preventDefault();
+      advance(e.deltaY);
+    };
+    const onScroll = () => {
+      // Reached the hero from further down the page, or scrolled past it: never leave it dirty.
+      if (!done && window.scrollY >= 40 && !started) finish();
     };
 
     // Fallback: if the hero leaves the screen before it is clean, finish so it never looks broken.
@@ -295,6 +320,10 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
     ro.observe(stage);
     io.observe(stage);
     if (scrollMode) {
+      if (window.scrollY >= 40) finish();
+      window.addEventListener("touchstart", onTouchStart, { passive: true });
+      window.addEventListener("touchmove", onTouchMove, { passive: false });
+      window.addEventListener("wheel", onWheel, { passive: false });
       window.addEventListener("scroll", onScroll, { passive: true });
       onScrollFrame();
     } else {
@@ -309,6 +338,9 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
       ro.disconnect();
       io.disconnect();
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("wheel", onWheel);
       if (scrollRaf) cancelAnimationFrame(scrollRaf);
       if (dropRaf) cancelAnimationFrame(dropRaf);
       stage.removeEventListener("pointermove", onMove);
