@@ -249,8 +249,10 @@ export const PAGE_DEFS: PageDef[] = [
     fields: [
       ...seo(DEFAULT_SETTINGS.seo.title, DEFAULT_SETTINGS.seo.description),
       t("eyebrow", "Hero eyebrow", "Curbside bin cleaning • Greater Toronto"),
-      t("heroLine1", "Hero headline (white)", "A Cleaner Bin."),
-      t("heroLine2", "Hero headline (yellow)", "A Fresher Home."),
+      t("heroBig1", "Hero headline line 1 (white)", "Spotless"),
+      t("heroBig2", "Hero headline line 2 (outline)", "Bins,"),
+      t("heroBig3", "Hero headline line 2 (cyan)", "Every"),
+      t("heroBig4", "Hero headline line 3 (white)", "Garbage Day"),
       ta("heroText", "Hero supporting text", "Fresh, clean bins. Right at your curb.\nMonthly bin cleaning across the GTA from $14.99."),
       img("heroImage", "Hero image", STOCK.curbBins),
       t("heroImageAlt", "Hero image description", "Yellow-lid wheelie bin being pressure washed at a residential curb"),

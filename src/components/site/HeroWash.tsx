@@ -40,8 +40,8 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
     const strokes: { x: number; y: number }[] = []; // kept to repaint on resize
 
     // Coverage grid used to decide when the hero is "clean enough".
-    const COLS = 24;
-    const ROWS = 14;
+    const COLS = 40;
+    const ROWS = 24;
     const cleaned = new Set<number>();
 
     // Seeded random so the grime looks the same after resize.
@@ -88,7 +88,7 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
       }
     }
 
-    const radius = () => Math.max(w, h) * (w < 640 ? 0.09 : 0.065);
+    const radius = () => Math.max(w, h) * (w < 640 ? 0.055 : 0.032);
 
     function stamp(x: number, y: number) {
       const r = radius();
@@ -149,7 +149,7 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
       last = p;
       nozzle.style.opacity = "1";
       moveNozzle(p.x, p.y);
-      if (cleaned.size / (COLS * ROWS) > 0.6) finish();
+      if (cleaned.size / (COLS * ROWS) > 0.55) finish();
     }
 
     function onLeave() {

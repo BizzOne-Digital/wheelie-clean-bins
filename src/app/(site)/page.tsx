@@ -24,26 +24,30 @@ export default async function HomePage() {
       {/* Hero: starts dirty, scrolling "pressure washes" it clean */}
       <div className="-mt-[72px] sm:-mt-20">
       <HeroWash>
-      <section className="relative flex h-full min-h-[560px] flex-col overflow-hidden pt-[72px] sm:min-h-[600px] sm:pt-20">
-        <div className="absolute inset-0 lg:left-[38%]">
-          <SafeImage src={c.heroImage} alt={c.heroImageAlt} fill priority sizes="(min-width: 1024px) 62vw, 100vw" className="object-cover object-[60%_center] animate-fade" />
-          {/* Blend into the dark left side while keeping the photo visible */}
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/30 lg:bg-gradient-to-r lg:from-ink lg:via-ink/55 lg:to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink to-transparent" />
+      <section className="relative flex h-full min-h-[600px] flex-col overflow-hidden pt-[72px] sm:pt-20">
+        {/* Dim photo + subtle grid behind the oversized headline */}
+        <div className="absolute inset-0">
+          <SafeImage src={c.heroImage} alt={c.heroImageAlt} fill priority sizes="100vw" className="object-cover object-[70%_center] opacity-35" />
+          <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/60" />
+          <div className="absolute inset-0 opacity-[0.07] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:64px_64px]" />
         </div>
-        <div className="container-x relative flex flex-1 items-end pb-12 pt-16 lg:items-center lg:pb-16 lg:pt-12">
-          <div className="max-w-xl animate-rise">
-            <span className="eyebrow">{c.eyebrow}</span>
-            <h1 className="mt-5 font-display text-[2.9rem] font-black leading-[0.98] tracking-tight sm:text-6xl lg:text-[4.4rem]">
-              <span className="block text-white">{c.heroLine1}</span>
-              <span className="block text-brand">{c.heroLine2}</span>
-            </h1>
-            <p className="mt-5 whitespace-pre-line font-display text-lg font-medium leading-snug text-white sm:text-xl">{c.heroText}</p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="/booking" className="btn btn-primary btn-lg">
+        <div className="relative flex flex-1 flex-col justify-between gap-8 px-4 pb-10 pt-10 sm:px-8 lg:px-[8vw] lg:pb-14 lg:pt-14">
+          <h1 className="animate-rise font-display font-black uppercase leading-[0.9] tracking-[-0.03em] text-[clamp(3rem,10.5vw,10rem)]">
+            <span className="block text-white">{c.heroBig1}</span>
+            <span className="block">
+              <span className="text-ink [paint-order:stroke_fill] [-webkit-text-stroke:4px_#fff] sm:[-webkit-text-stroke:6px_#fff]">{c.heroBig2}</span>{" "}
+              <span className="text-cyan">{c.heroBig3}</span>
+            </span>
+            <span className="block text-white">{c.heroBig4}</span>
+          </h1>
+          <div className="max-w-xl">
+            <p className="whitespace-pre-line text-lg leading-snug text-soft sm:text-2xl">{c.heroText}</p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/booking" className="btn btn-primary btn-lg rounded-full">
                 Book My First Clean <ArrowRight className="h-5 w-5" aria-hidden />
               </Link>
-              <Link href="/pricing" className="btn btn-outline btn-lg">
+              <Link href="/pricing" className="btn btn-outline btn-lg rounded-full">
                 View Plans
               </Link>
             </div>
