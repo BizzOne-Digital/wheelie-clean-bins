@@ -31,10 +31,10 @@ export default async function HomePage() {
           <div className="absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-brand/10 blur-[120px]" />
           <div className="absolute inset-0 opacity-[0.06] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:64px_64px]" />
         </div>
-        <div className="container-x relative z-[1] flex flex-1 items-center pb-6 pt-10 lg:pb-16">
-          <div className="max-w-xl animate-rise lg:max-w-[46%]">
+        <div className="relative z-[1] flex flex-1 flex-col px-4 pb-6 pt-10 sm:px-8 lg:px-[8vw] lg:pb-14 lg:pt-12">
+          <div className="animate-rise">
             <p className="font-display text-sm font-bold uppercase tracking-[0.18em] text-cyan">{c.heroKicker}</p>
-            <h1 className="mt-4 font-display font-black leading-[0.95] tracking-[-0.03em] text-[clamp(3rem,5.2vw,5.4rem)]">
+            <h1 className="mt-4 font-display font-black uppercase leading-[0.9] tracking-[-0.035em] text-[clamp(3rem,7.4vw,9.5rem)]">
               <span className="block text-white">{c.heroTitle1}</span>
               <span className="block text-brand">{c.heroTitle2}</span>
             </h1>
@@ -44,7 +44,7 @@ export default async function HomePage() {
                 <SafeImage src={c.heroMascot} alt={c.heroMascotAlt} fill priority sizes="448px" className="object-contain object-bottom" />
               </div>
             </div>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-soft sm:text-xl">{c.heroIntro}</p>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-soft sm:text-xl lg:mt-14">{c.heroIntro}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/pricing" className="btn btn-primary btn-lg rounded-full">
                 Explore Cleaning Plans <ArrowRight className="h-5 w-5" aria-hidden />
@@ -57,7 +57,7 @@ export default async function HomePage() {
           </div>
         </div>
         {/* Desktop: mascot lower-right */}
-        <div className="absolute bottom-6 right-[2%] hidden h-[80%] w-[50%] lg:block" aria-hidden>
+        <div className="absolute bottom-6 right-[3%] hidden h-[58%] w-[42%] lg:block" aria-hidden>
           <div className="relative h-full w-full animate-float">
             <SafeImage src={c.heroMascot} alt="" fill sizes="50vw" className="object-contain object-bottom" />
           </div>

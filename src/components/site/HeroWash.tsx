@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Hand, MousePointer2 } from "lucide-react";
+import { Mouse, MousePointer2 } from "lucide-react";
 
 /**
  * Interactive "pressure wash" hero. The clean hero (children) sits underneath a layer of grime.
@@ -221,24 +221,95 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
       for (const s of strokes) stamp(s.x * w, s.y * h);
     }
 
-    // If the visitor scrolls past the hero without washing, clean it so it never looks broken.
+    /* ---------- Touch devices: scrolling drives the nozzle along a zig-zag path ---------- */
+    const scrollMode = window.matchMedia("(hover: none)").matches;
+    let washedT = 0;
+    let scrollRaf = 0;
+
+    function pathPoint(t: number) {
+      // Zig-zag rows roughly 110px apart covering the whole hero, top to bottom.
+      const rows = Math.max(4, Math.round(h / 110));
+      const padX = w * 0.06;
+      const span = w - padX * 2;
+      const rowLen = span;
+      const drop = (h * 0.92) / (rows - 1);
+      const total = rows * rowLen + (rows - 1) * drop;
+      let d = Math.min(Math.max(t, 0), 1) * total;
+      for (let r = 0; r < rows; r++) {
+        const y = h * 0.04 + r * drop;
+        const ltr = r % 2 === 0;
+        if (d <= rowLen) return { x: ltr ? padX + d : w - padX - d, y, dir: ltr ? -1 : 1 };
+        d -= rowLen;
+        if (r < rows - 1) {
+          if (d <= drop) return { x: ltr ? w - padX : padX, y: y + d, dir: ltr ? -1 : 1 };
+          d -= drop;
+        }
+      }
+      return { x: padX, y: h * 0.96, dir: 1 };
+    }
+
+    function scrollProgress() {
+      const rect = stage.getBoundingClientRect();
+      const range = Math.max(1, h - window.innerHeight * 0.55);
+      return Math.min(Math.max(-rect.top / range, 0), 1);
+    }
+
+    function onScrollFrame() {
+      scrollRaf = 0;
+      if (done) return;
+      const t = scrollProgress();
+      if (t > washedT) {
+        const steps = Math.max(1, Math.ceil((t - washedT) * 120));
+        let prev = pathPoint(washedT);
+        for (let i = 1; i <= steps; i++) {
+          const p = pathPoint(washedT + ((t - washedT) * i) / steps);
+          washLine(prev, p);
+          prev = p;
+        }
+        dir = prev.dir;
+        spray(prev.x, prev.y, 20);
+        washedT = t;
+        if (!started) {
+          started = true;
+          hint.style.opacity = "0";
+        }
+      }
+      const p = pathPoint(Math.max(washedT, 0.0005));
+      dir = p.dir;
+      nozzle.style.opacity = "1";
+      moveNozzle(p.x, p.y);
+      if (washedT >= 0.98 || cleaned.size / (COLS * ROWS) > 0.85) finish();
+    }
+
+    const onScroll = () => {
+      if (!scrollRaf) scrollRaf = requestAnimationFrame(onScrollFrame);
+    };
+
+    // Fallback: if the hero leaves the screen before it is clean, finish so it never looks broken.
     const io = new IntersectionObserver(([entry]) => {
-      if (entry.intersectionRatio < 0.25) finish();
-    }, { threshold: [0.25] });
+      if (!entry.isIntersecting || (!scrollMode && entry.intersectionRatio < 0.25)) finish();
+    }, { threshold: [0, 0.25] });
 
     resize();
     const ro = new ResizeObserver(resize);
     ro.observe(stage);
     io.observe(stage);
-    stage.addEventListener("pointermove", onMove);
-    stage.addEventListener("pointerdown", onMove);
-    stage.addEventListener("pointerleave", onLeave);
-    stage.addEventListener("pointercancel", onLeave);
+    if (scrollMode) {
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScrollFrame();
+    } else {
+      stage.addEventListener("pointermove", onMove);
+      stage.addEventListener("pointerdown", onMove);
+      stage.addEventListener("pointerleave", onLeave);
+      stage.addEventListener("pointercancel", onLeave);
+    }
     const onUp = (e: PointerEvent) => e.pointerType === "touch" && onLeave();
-    stage.addEventListener("pointerup", onUp);
+    if (!scrollMode) stage.addEventListener("pointerup", onUp);
     return () => {
       ro.disconnect();
       io.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
       if (dropRaf) cancelAnimationFrame(dropRaf);
       stage.removeEventListener("pointermove", onMove);
       stage.removeEventListener("pointerdown", onMove);
@@ -274,14 +345,14 @@ export function HeroWash({ children }: { children: React.ReactNode }) {
             </svg>
           </div>
 
-          <div ref={hintRef} className="pointer-events-none absolute inset-x-0 bottom-8 z-30 flex justify-center px-4 transition-opacity duration-500 sm:bottom-12">
+          <div ref={hintRef} className={`pointer-events-none ${touch ? "fixed" : "absolute"} inset-x-0 bottom-8 z-30 flex justify-center px-4 transition-opacity duration-500 sm:bottom-12`}>
             <div className="rounded-2xl border border-white/10 bg-ink/85 px-6 py-4 text-center shadow-2xl backdrop-blur">
               {touch ? (
-                <Hand className="mx-auto h-6 w-6 animate-bounce text-cyan" aria-hidden />
+                <Mouse className="mx-auto h-6 w-6 animate-bounce text-cyan" aria-hidden />
               ) : (
                 <MousePointer2 className="mx-auto h-6 w-6 animate-bounce text-cyan" aria-hidden />
               )}
-              <p className="mt-2 font-display text-lg font-bold text-white">{touch ? "Swipe to wash it clean" : "Move your mouse to wash it clean"}</p>
+              <p className="mt-2 font-display text-lg font-bold text-white">{touch ? "Scroll to wash it clean" : "Move your mouse to wash it clean"}</p>
               <p className="text-xs text-muted">This page sat at the curb all week.</p>
             </div>
           </div>
