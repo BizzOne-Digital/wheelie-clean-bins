@@ -6,13 +6,10 @@ import { useState } from "react";
 import {
   CalendarCheck,
   CircleDollarSign,
-  HelpCircle,
-  Image as ImageIcon,
   Inbox,
   LayoutDashboard,
   Menu,
   Repeat,
-  Settings,
   Sparkles,
   Users,
   X,
@@ -26,9 +23,6 @@ const LINKS = [
   { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
   { href: "/admin/services", label: "Services", icon: Sparkles },
   { href: "/admin/pricing", label: "Pricing", icon: CircleDollarSign },
-  { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },
-  { href: "/admin/media", label: "Media", icon: ImageIcon },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export function AdminNav({ mode }: { mode: "mobile" | "desktop" }) {

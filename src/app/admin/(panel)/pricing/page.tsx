@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { dbConnect } from "@/lib/db";
 import { getSettings } from "@/lib/content";
 import { computeQuote } from "@/lib/pricing";
@@ -50,9 +49,6 @@ export default async function PricingAdmin() {
           </li>
           <li>Tax: {b.taxEnabled ? `${b.taxLabel} ${b.taxRatePercent}% shown separately` : "not added (disabled)"}</li>
         </ul>
-        <p className="mt-3 text-sm">
-          <Link href="/admin/settings#billing" className="text-cyan hover:underline">Change billing rules in Settings</Link>
-        </p>
 
         {plans[0] && (
           <div className="mt-5 overflow-x-auto">

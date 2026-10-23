@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Loader2, Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { deleteFaqAction, deleteServiceAction, saveFaqAction, savePlanAction, saveServiceAction } from "@/app/admin/actions/content";
+import { deleteServiceAction, savePlanAction, saveServiceAction } from "@/app/admin/actions/content";
 import type { ActionResult } from "./ActionForm";
 import { AdminImageField } from "./AdminImageField";
 
@@ -180,56 +180,6 @@ export function PlanEditor({ initial, isNew = false }: { initial: PlanRow; isNew
         </button>
       </div>
       <p className="text-xs text-muted">Price changes apply to new bookings and checkouts. Existing Stripe subscriptions keep their current price.</p>
-    </div>
-  );
-}
-
-/* ---------------------------------------------------------------- FAQs */
-
-export interface FaqRow {
-  id?: string;
-  question: string;
-  answer: string;
-  active: boolean;
-  sortOrder: number;
-}
-
-export function FaqEditor({ initial, isNew = false }: { initial: FaqRow; isNew?: boolean }) {
-  const [f, setF] = useState(initial);
-  const { pending, run } = useSaver();
-  const id = initial.id ?? "new";
-  const upd = <K extends keyof FaqRow>(k: K, v: FaqRow[K]) => setF((s) => ({ ...s, [k]: v }));
-
-  return (
-    <div className="card space-y-3 p-5">
-      <div className="grid gap-3 sm:grid-cols-[1fr_7rem]">
-        <div>
-          <label className="field-label" htmlFor={`f-q-${id}`}>{isNew ? "New question" : "Question"}</label>
-          <input id={`f-q-${id}`} className="field" value={f.question} onChange={(e) => upd("question", e.target.value)} />
-        </div>
-        <div>
-          <label className="field-label" htmlFor={`f-o-${id}`}>Order</label>
-          <input id={`f-o-${id}`} type="number" min={0} className="field" value={f.sortOrder} onChange={(e) => upd("sortOrder", Number(e.target.value))} />
-        </div>
-      </div>
-      <div>
-        <label className="field-label" htmlFor={`f-a-${id}`}>Answer</label>
-        <textarea id={`f-a-${id}`} rows={3} className="field" value={f.answer} onChange={(e) => upd("answer", e.target.value)} />
-      </div>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Toggle id={`f-act-${id}`} label="Published" checked={f.active} onChange={(v) => upd("active", v)} />
-        <div className="flex gap-2">
-          {!isNew && (
-            <button type="button" className="btn btn-danger btn-sm" disabled={pending} onClick={() => confirm("Delete this FAQ?") && run(() => deleteFaqAction(initial.id!))}>
-              <Trash2 className="h-4 w-4" aria-hidden /> Delete
-            </button>
-          )}
-          <button type="button" className="btn btn-primary btn-sm" disabled={pending} onClick={() => run(() => saveFaqAction(f), isNew ? () => setF(initial) : undefined)}>
-            {pending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : isNew ? <Plus className="h-4 w-4" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />}
-            {isNew ? "Add FAQ" : "Save"}
-          </button>
-        </div>
-      </div>
     </div>
   );
 }
