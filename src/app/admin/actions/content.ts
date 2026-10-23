@@ -7,10 +7,9 @@ import { requireAdmin } from "@/lib/auth";
 import { audit } from "@/lib/audit";
 import { dbConnect } from "@/lib/db";
 import { mergeSettings } from "@/lib/content";
-import { PAGE_DEFS, PAGE_SLUGS, type PageSlug, type SiteSettingsData } from "@/lib/defaults";
+import type { SiteSettingsData } from "@/lib/defaults";
 import { dollarsToCents } from "@/lib/money";
 import { cleanupReplacedUploads, countReferences, findUsages, parseUploadUrl } from "@/lib/uploads";
-import { PageContent } from "@/models/PageContent";
 import { Service } from "@/models/Service";
 import { PricingPlan } from "@/models/PricingPlan";
 import { FAQ } from "@/models/FAQ";
@@ -31,60 +30,6 @@ const imageUrl = z
 
 function revalidatePublic() {
   revalidatePath("/", "layout");
-}
-
-/* ---------------------------------------------------------------- Pages */
-
-export async function savePageAction(slug: PageSlug, values: Record<string, string>, mode: "draft" | "publish" | "discard"): Promise<ActionResult> {
-  const admin = await requireAdmin();
-  if (!PAGE_SLUGS.includes(slug)) return fail("Unknown page");
-  const def = PAGE_DEFS.find((p) => p.slug === slug)!;
-  await dbConnect();
-  const existing = await PageContent.findOne({ slug }).lean();
-  const prevImages = def.fields
-    .filter((f) => f.type === "image")
-    .flatMap((f) => [existing?.published?.[f.key], existing?.draft?.[f.key]]);
-
-  if (mode === "discard") {
-    await PageContent.updateOne({ slug }, { $set: { draft: null, updatedBy: admin.email } });
-    await cleanupReplacedUploads(prevImages, def.fields.filter((f) => f.type === "image").map((f) => existing?.published?.[f.key]));
-    await audit(admin, "page.draft_discarded", "PageContent", slug);
-    return ok("Draft discarded");
-  }
-
-  const clean: Record<string, string> = {};
-  for (const f of def.fields) {
-    const raw = typeof values[f.key] === "string" ? values[f.key] : f.default;
-    if (f.type === "image") {
-      const parsed = imageUrl.safeParse(raw);
-      if (!parsed.success) return fail(`${f.label}: invalid image URL`);
-      clean[f.key] = parsed.data;
-    } else {
-      const v = raw.replace(/\r\n/g, "\n").trim();
-      if (v.length > 5000) return fail(`${f.label} is too long`);
-      if (!v && (f.key.startsWith("seo") || f.key === "title")) return fail(`${f.label} is required`);
-      clean[f.key] = v;
-    }
-  }
-
-  if (mode === "draft") {
-    await PageContent.updateOne({ slug }, { $set: { draft: clean, updatedBy: admin.email } }, { upsert: true });
-    // Images only referenced by the previous draft can go once the new draft is saved.
-    const keep = def.fields.filter((f) => f.type === "image").flatMap((f) => [clean[f.key], existing?.published?.[f.key]]);
-    await cleanupReplacedUploads(prevImages, keep);
-    await audit(admin, "page.draft_saved", "PageContent", slug);
-    return ok("Draft saved. It is not live until you publish.");
-  }
-
-  await PageContent.updateOne(
-    { slug },
-    { $set: { published: clean, draft: null, publishedAt: new Date(), updatedBy: admin.email } },
-    { upsert: true },
-  );
-  await cleanupReplacedUploads(prevImages, def.fields.filter((f) => f.type === "image").map((f) => clean[f.key]));
-  await audit(admin, "page.published", "PageContent", slug);
-  revalidatePublic();
-  return ok("Published. Changes are live.");
 }
 
 /* ---------------------------------------------------------------- Services */
@@ -288,15 +233,6 @@ export async function replaceMediaAction(oldUrl: string, newUrl: string): Promis
   const admin = await requireAdmin();
   if (!parseUploadUrl(oldUrl) || !parseUploadUrl(newUrl)) return fail("Invalid image");
   await dbConnect();
-  const pages = await PageContent.find().lean();
-  for (const p of pages) {
-    const set: Record<string, string> = {};
-    for (const area of ["published", "draft"] as const) {
-      const map = p[area];
-      if (map) for (const [k, v] of Object.entries(map)) if (v === oldUrl) set[`${area}.${k}`] = newUrl;
-    }
-    if (Object.keys(set).length) await PageContent.updateOne({ _id: p._id }, { $set: set });
-  }
   await Service.updateMany({ imageUrl: oldUrl }, { $set: { imageUrl: newUrl } });
   const settings = await SiteSettings.findOne({ singleton: "site" }).lean();
   if (settings) {

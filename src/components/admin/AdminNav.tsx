@@ -6,7 +6,6 @@ import { useState } from "react";
 import {
   CalendarCheck,
   CircleDollarSign,
-  FileText,
   HelpCircle,
   Image as ImageIcon,
   Inbox,
@@ -25,7 +24,6 @@ const LINKS = [
   { href: "/admin/subscriptions", label: "Subscriptions", icon: Repeat },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
-  { href: "/admin/pages", label: "Pages", icon: FileText },
   { href: "/admin/services", label: "Services", icon: Sparkles },
   { href: "/admin/pricing", label: "Pricing", icon: CircleDollarSign },
   { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },

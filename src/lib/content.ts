@@ -14,7 +14,6 @@ import {
   type SiteSettingsData,
 } from "./defaults";
 import { SiteSettings } from "@/models/SiteSettings";
-import { PageContent } from "@/models/PageContent";
 import { PricingPlan } from "@/models/PricingPlan";
 import { Service } from "@/models/Service";
 import { FAQ } from "@/models/FAQ";
@@ -53,16 +52,8 @@ export const getSettings = cache(async (): Promise<SiteSettingsData> =>
   }, DEFAULT_SETTINGS),
 );
 
-export const getPage = cache(async (slug: PageSlug): Promise<Record<string, string>> => {
-  const defaults = pageDefaults(slug);
-  return safe(async () => {
-    const doc = await PageContent.findOne({ slug }).lean();
-    const published = (doc?.published ?? {}) as Record<string, string>;
-    const merged: Record<string, string> = { ...defaults };
-    for (const [k, v] of Object.entries(published)) if (typeof v === "string" && k in defaults) merged[k] = resolveSiteImage(v, slug === "about" && k === "image");
-    return merged;
-  }, defaults);
-});
+/** Page copy lives in code (src/lib/defaults.ts). It is not stored in or edited from the database. */
+export const getPage = cache(async (slug: PageSlug): Promise<Record<string, string>> => pageDefaults(slug));
 
 function planFromDoc(p: Record<string, unknown>): PlanData {
   return {

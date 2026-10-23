@@ -3,7 +3,6 @@ import { randomBytes } from "crypto";
 import { UPLOAD_FOLDERS, type UploadFolder } from "./constants";
 import { dbConnect } from "./db";
 import { StoredUpload } from "@/models/StoredUpload";
-import { PageContent } from "@/models/PageContent";
 import { Service } from "@/models/Service";
 import { SiteSettings } from "@/models/SiteSettings";
 
@@ -61,17 +60,11 @@ export function parseUploadUrl(url: unknown): { folder: UploadFolder; filename: 
 /** Every place an uploaded image URL can be referenced. Keep in sync when adding image fields. */
 export async function countReferences(url: string) {
   await dbConnect();
-  const [pages, services, settings] = await Promise.all([
-    PageContent.find({}, { published: 1, draft: 1 }).lean(),
+  const [services, settings] = await Promise.all([
     Service.countDocuments({ imageUrl: url }),
     SiteSettings.findOne({ singleton: "site" }, { data: 1 }).lean(),
   ]);
   let count = services;
-  for (const p of pages) {
-    for (const map of [p.published, p.draft]) {
-      if (map) for (const v of Object.values(map)) if (v === url) count++;
-    }
-  }
   if (settings && JSON.stringify(settings.data ?? {}).includes(`"${url}"`)) count++;
   return count;
 }
@@ -81,17 +74,10 @@ export async function findUsages(urls: string[]) {
   await dbConnect();
   const set = new Set(urls);
   const usage: Record<string, string[]> = Object.fromEntries(urls.map((u) => [u, []]));
-  const [pages, services, settings] = await Promise.all([
-    PageContent.find({}, { slug: 1, published: 1, draft: 1 }).lean(),
+  const [services, settings] = await Promise.all([
     Service.find({ imageUrl: { $in: urls } }, { title: 1, imageUrl: 1 }).lean(),
     SiteSettings.findOne({ singleton: "site" }, { data: 1 }).lean(),
   ]);
-  for (const p of pages) {
-    for (const [label, map] of [["", p.published], [" (draft)", p.draft]] as const) {
-      if (!map) continue;
-      for (const [k, v] of Object.entries(map)) if (set.has(v)) usage[v].push(`Page: ${p.slug} › ${k}${label}`);
-    }
-  }
   for (const s of services) usage[s.imageUrl].push(`Service: ${s.title}`);
   const data = (settings?.data ?? {}) as Record<string, unknown>;
   for (const key of ["logoUrl", "faviconUrl"]) if (set.has(data[key] as string)) usage[data[key] as string].push(`Settings: ${key}`);
