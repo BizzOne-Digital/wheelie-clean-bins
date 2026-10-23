@@ -12,7 +12,7 @@ export function Footer({ settings }: { settings: SiteSettingsData }) {
     <footer className="border-t border-line bg-ink-2">
       <div className="container-x grid gap-10 py-12 md:grid-cols-[1.1fr_1fr_1fr] lg:grid-cols-[1.2fr_1fr_1fr_1.1fr]">
         <div>
-          <Link href="/" aria-label={`${settings.businessName} home`} className="relative block h-24 w-40">
+          <Link href="/" aria-label={`${settings.businessName} home`} className="relative block h-28 w-40 drop-shadow-[0_4px_18px_rgba(0,189,232,0.18)] sm:h-32 sm:w-44">
             <SafeImage src={settings.logoUrl} alt={`${settings.businessName} logo`} fill sizes="160px" className="object-contain object-left" />
           </Link>
           <p className="mt-4 max-w-xs text-sm text-muted">
