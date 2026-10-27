@@ -37,18 +37,34 @@ export function GarbageDayStory() {
 
   useEffect(() => {
     let raf = 0;
-    const update = () => {
-      raf = 0;
+    let shown = 0;
+    let target = 0;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const readTarget = () => {
       const el = wrapRef.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const range = rect.height - window.innerHeight;
-      setP(range > 0 ? clamp(-rect.top / range) : 1);
+      target = range > 0 ? clamp(-rect.top / range) : 1;
     };
+
+    // Ease the displayed progress toward the scroll position so wheel steps animate smoothly.
+    const tick = () => {
+      raf = 0;
+      const diff = target - shown;
+      shown = reduce || Math.abs(diff) < 0.0004 ? target : shown + diff * 0.14;
+      setP(shown);
+      if (shown !== target) raf = requestAnimationFrame(tick);
+    };
+
     const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
+      readTarget();
+      if (!raf) raf = requestAnimationFrame(tick);
     };
-    update();
+    readTarget();
+    shown = target;
+    setP(shown);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
@@ -77,7 +93,8 @@ export function GarbageDayStory() {
   // Our van: arrives, washes, leaves to the right.
   const vanIn = ease(seg(p, 0.42, 0.53));
   const vanOut = ease(seg(p, 0.84, 0.97));
-  const vanX = vanOut > 0 ? lerp(745, 1320, vanOut) : lerp(1320, 745, vanIn);
+  // Comes in from the left, parks just before the bin, then drives off to the right.
+  const vanX = vanOut > 0 ? lerp(300, 1320, vanOut) : lerp(-420, 300, vanIn);
   const washing = p > 0.56 && p < 0.8;
   const clean = ease(seg(p, 0.58, 0.78));
 
@@ -245,11 +262,11 @@ export function GarbageDayStory() {
                   ))}
                   {/* pressure wand and spray */}
                   <g opacity={washing ? 1 : 0}>
-                    <path d="M-6 640 L-34 618" stroke="#cfd8dc" strokeWidth="5" strokeLinecap="round" />
+                    <path d="M326 640 L350 616" stroke="#cfd8dc" strokeWidth="5" strokeLinecap="round" />
                     {[0, 1, 2, 3, 4].map((i) => (
                       <path
                         key={i}
-                        d={`M-36 616 L${-58 - i * 4} ${560 + i * 14}`}
+                        d={`M352 614 L${368 + i * 4} ${546 + i * 14}`}
                         stroke="#7fe3ff"
                         strokeWidth="3.5"
                         strokeLinecap="round"
