@@ -6,6 +6,7 @@ import { SafeImage } from "@/components/ui/SafeImage";
 import { BenefitsStrip, CtaBand, HowItWorks, OfferStrip, PricingGrid, ServiceCard } from "@/components/site/sections";
 import { AreasStrip, CompareSection, FaqPreview, IncludedSection, WhyCleanSection } from "@/components/site/home-sections";
 import { HeroWash } from "@/components/site/HeroWash";
+import { GarbageDayStory } from "@/components/site/GarbageDayStory";
 import { QuickBookForm } from "@/components/booking/QuickBookForm";
 import { telHref } from "@/components/site/nav";
 
@@ -82,6 +83,8 @@ export default async function HomePage() {
           </div>
         </div>
       </div>
+
+      <GarbageDayStory />
 
       <BenefitsStrip
         items={[
