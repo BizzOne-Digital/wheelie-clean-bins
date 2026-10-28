@@ -461,7 +461,6 @@ export function BookingFlow(props: BookingFlowProps) {
                 <div className="grid gap-3 sm:grid-cols-2">
                   {[
                     { v: "1", t: "Monthly", d: props.recurringMonthly ? "Billed each month until cancelled" : "Pay one month at a time" },
-                    { v: "3", t: "3 months upfront", d: "One-time payment, no auto-renewal" },
                     { v: "6", t: "6 months upfront", d: "One-time payment, no auto-renewal" },
                     { v: "12", t: "12 months upfront", d: props.annualPromoEnabled ? "Includes a bonus of your choice" : "One-time payment, no auto-renewal" },
                   ].map((o, i) => (

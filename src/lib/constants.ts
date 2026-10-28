@@ -13,7 +13,7 @@ export const PAYMENT_METHODS = [
   { value: "emt", label: "E-Transfer (EMT)" },
 ] as const;
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number]["value"];
-export const BILLING_TERMS = [1, 3, 6, 12] as const;
+export const BILLING_TERMS = [1, 6, 12] as const;
 export type BillingTerm = (typeof BILLING_TERMS)[number];
 export const PROMO_CHOICES = [
   { value: "extra_clean", label: "One free extra clean" },

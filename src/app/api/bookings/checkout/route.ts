@@ -38,7 +38,7 @@ export async function POST(req: Request) {
   let quote;
   try {
     quote = computeQuote(
-      { plan, bins: booking.bins, termMonths: booking.termMonths as 1 | 3 | 6 | 12, promoChoice: (booking.promoChoice as "extra_clean" | "month_free" | null) ?? null },
+      { plan, bins: booking.bins, termMonths: booking.termMonths as 1 | 6 | 12, promoChoice: (booking.promoChoice as "extra_clean" | "month_free" | null) ?? null },
       settings,
     );
   } catch (err) {

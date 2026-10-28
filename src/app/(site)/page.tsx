@@ -5,7 +5,6 @@ import { pageMetadata } from "@/lib/seo";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { BenefitsStrip, CtaBand, HowItWorks, OfferStrip, PricingGrid, ServiceCard } from "@/components/site/sections";
 import { AreasStrip, CompareSection, FaqPreview, IncludedSection, WhyCleanSection } from "@/components/site/home-sections";
-import { HeroWash } from "@/components/site/HeroWash";
 import { GarbageDayStory } from "@/components/site/GarbageDayStory";
 import { QuickBookForm } from "@/components/booking/QuickBookForm";
 import { telHref } from "@/components/site/nav";
@@ -22,9 +21,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero: starts dirty, scrolling "pressure washes" it clean */}
+      {/* Hero */}
       <div className="-mt-[72px] sm:-mt-20">
-      <HeroWash>
       <section className="relative flex min-h-[100svh] flex-col overflow-hidden pt-[72px] sm:pt-20">
         {/* Glow + subtle grid behind the content */}
         <div className="absolute inset-0" aria-hidden>
@@ -64,7 +62,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-      </HeroWash>
       </div>
 
       {/* Service-area ticker */}
@@ -109,7 +106,7 @@ export default async function HomePage() {
             <p className="mt-2 text-soft/85">{c.planSubtitle}</p>
           </div>
           <PricingGrid plans={plans} features={c.planFeatures.split("\n").map((l) => l.trim()).filter(Boolean)} />
-          <p className="mt-4 text-center text-sm text-soft/85">Pay monthly or choose 3, 6 or 12 months upfront. {c.planBinNote}</p>
+          <p className="mt-4 text-center text-sm text-soft/85">Pay monthly, or choose 6 or 12 months upfront. {c.planBinNote}</p>
           {settings.billing.annualPromoEnabled && <OfferStrip title={pricing.promoTitle} text={pricing.promoText} />}
         </div>
       </section>

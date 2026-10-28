@@ -11,7 +11,7 @@ export const generateMetadata = () => pageMetadata("pricing");
 
 export default async function PricingPage() {
   const [c, plans, settings] = await Promise.all([getPage("pricing"), getPlans(), getSettings()]);
-  const terms = [1, 3, 6, 12] as const;
+  const terms = [1, 6, 12] as const;
 
   return (
     <>
@@ -43,7 +43,7 @@ export default async function PricingPage() {
             </div>
             <div className="card p-5">
               <CalendarClock className="h-6 w-6 text-cyan" aria-hidden />
-              <h3 className="mt-3 font-display text-lg font-bold">3, 6 or 12 months upfront</h3>
+              <h3 className="mt-3 font-display text-lg font-bold">6 or 12 months upfront</h3>
               <p className="mt-1 text-sm text-soft/85">A single one-time payment covering the months you choose. It does not renew automatically.</p>
             </div>
           </div>

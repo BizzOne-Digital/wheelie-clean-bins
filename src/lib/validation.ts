@@ -35,7 +35,7 @@ export const scheduleStepSchema = z.object({
 });
 
 export const planStepSchema = z.object({
-  termMonths: z.coerce.number().refine((n) => [1, 3, 6, 12].includes(n), "Choose a billing option") as z.ZodType<1 | 3 | 6 | 12>,
+  termMonths: z.coerce.number().refine((n) => [1, 6, 12].includes(n), "Choose a billing option") as z.ZodType<1 | 6 | 12>,
   promoChoice: z.enum(["extra_clean", "month_free"]).nullable().optional(),
   paymentMethod: z.enum(["credit", "debit", "emt"], { message: "Choose a payment method" }),
   notes: z.string().trim().max(1000, "Notes are too long").optional().default(""),
@@ -50,7 +50,7 @@ export type BookingInput = z.infer<typeof bookingSchema>;
 export const quoteRequestSchema = z.object({
   planKey: z.string().min(1),
   bins: z.coerce.number().int().min(1).max(50),
-  termMonths: z.coerce.number().refine((n) => [1, 3, 6, 12].includes(n)) as z.ZodType<1 | 3 | 6 | 12>,
+  termMonths: z.coerce.number().refine((n) => [1, 6, 12].includes(n)) as z.ZodType<1 | 6 | 12>,
   promoChoice: z.enum(["extra_clean", "month_free"]).nullable().optional(),
 });
 

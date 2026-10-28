@@ -48,7 +48,7 @@ export function computeQuote(input: QuoteInput, settings: SiteSettingsData): Quo
   if (!plan.active) throw new QuoteError("This plan is not currently available.");
   if (!Number.isInteger(bins) || bins < 1) throw new QuoteError("Choose at least one bin.");
   if (bins > settings.booking.maxBins) throw new QuoteError(`For more than ${settings.booking.maxBins} bins, please contact us for a quote.`);
-  if (![1, 3, 6, 12].includes(termMonths)) throw new QuoteError("Invalid billing term.");
+  if (![1, 6, 12].includes(termMonths)) throw new QuoteError("Invalid billing term.");
 
   const promoAvailable = termMonths === 12 && settings.billing.annualPromoEnabled;
   let promoChoice: PromoChoice | null = null;

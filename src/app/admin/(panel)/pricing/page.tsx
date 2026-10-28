@@ -42,7 +42,7 @@ export default async function PricingAdmin() {
         <h2 className="font-display text-lg font-bold">Billing rules in effect</h2>
         <ul className="mt-3 space-y-1.5 text-sm text-soft">
           <li>Monthly billing: {b.recurringMonthly ? "recurring Stripe subscription, renews monthly" : "single month, paid once"}</li>
-          <li>3, 6 and 12 months: one-time prepaid payment, no automatic renewal</li>
+          <li>6 and 12 months: one-time prepaid payment, no automatic renewal</li>
           <li>12-month bonus: {b.annualPromoEnabled ? "enabled (customer chooses one free extra clean or one month free)" : "disabled"}</li>
           <li>
             “One month free” discount covers: {b.monthFreeIncludesExtraBins ? "base plan + additional bins for one month" : "base plan price for one month only (additional bins still charged for all 12 months)"}
@@ -58,7 +58,7 @@ export default async function PricingAdmin() {
                 <tr><th className="py-1">Term</th><th>Subtotal</th><th>Discount</th><th>Tax</th><th>Total</th></tr>
               </thead>
               <tbody className="divide-y divide-line">
-                {([1, 3, 6, 12] as const).map((t) => {
+                {([1, 6, 12] as const).map((t) => {
                   const plan = { ...plans[0], key: plans[0].key, regions: plans[0].regions ?? [], accent: plans[0].accent as "yellow" | "cyan", active: true, sortOrder: 0 };
                   const q = computeQuote({ plan, bins: plan.includedBins + 1, termMonths: t, promoChoice: t === 12 && b.annualPromoEnabled ? "month_free" : null }, settings);
                   return (
