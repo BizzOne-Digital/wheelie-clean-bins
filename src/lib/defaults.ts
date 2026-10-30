@@ -41,7 +41,7 @@ export const DEFAULT_SETTINGS: SiteSettingsData = {
   tagline: "Cleaner Bins. Happier Homes. Across the GTA.",
   phone: "6475708029",
   phoneDisplay: "647 570 8029",
-  email: "zakariyyadadabhai91@gmail.com",
+  email: "support@wheeliecleanbin.ca",
   logoUrl: "/brand/logo.png",
   faviconUrl: "",
   serviceAreas: ["York Region", "Durham", "Peel", "Halton", "City of Toronto", "Scarborough"],
