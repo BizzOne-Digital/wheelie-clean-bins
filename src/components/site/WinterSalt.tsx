@@ -3,10 +3,13 @@ import { ArrowRight, Check, Phone, Snowflake, Truck } from "lucide-react";
 import type { SiteSettingsData } from "@/lib/defaults";
 import { telHref } from "./nav";
 
-/** Winter salt delivery runs November through April (Toronto time). */
+/** Winter salt delivery runs November through April (Toronto time); shown from Oct 25 so it is live before the season starts. */
 export function isWinterSeason(date = new Date()) {
-  const month = Number(date.toLocaleDateString("en-CA", { month: "numeric", timeZone: "America/Toronto" }));
-  return month >= 11 || month <= 4;
+  const [month, day] = date
+    .toLocaleDateString("en-CA", { month: "numeric", day: "numeric", timeZone: "America/Toronto" })
+    .split("-")
+    .map(Number);
+  return month >= 11 || month <= 4 || (month === 10 && day >= 25);
 }
 
 const OFFERS = [
