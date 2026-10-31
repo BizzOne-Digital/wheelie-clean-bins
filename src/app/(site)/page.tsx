@@ -6,6 +6,7 @@ import { SafeImage } from "@/components/ui/SafeImage";
 import { BenefitsStrip, CtaBand, HowItWorks, OfferStrip, PricingGrid, ServiceCard } from "@/components/site/sections";
 import { AreasStrip, CompareSection, FaqPreview, IncludedSection, WhyCleanSection } from "@/components/site/home-sections";
 import { GarbageDayStory } from "@/components/site/GarbageDayStory";
+import { WinterSaltSection } from "@/components/site/WinterSalt";
 import { QuickBookForm } from "@/components/booking/QuickBookForm";
 import { telHref } from "@/components/site/nav";
 
@@ -112,6 +113,8 @@ export default async function HomePage() {
       </section>
 
       <IncludedSection items={included} />
+
+      <WinterSaltSection settings={settings} />
 
       {/* Booking preview */}
       <section className="section-rule py-14 sm:py-16" aria-labelledby="book-heading">

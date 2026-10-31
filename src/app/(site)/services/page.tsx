@@ -4,6 +4,7 @@ import { getPage, getPlans, getServices, getSettings } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { CtaBand, HowItWorks, PageHero, PricingGrid, QuoteCtas, SectionHeading, ServiceCard } from "@/components/site/sections";
+import { WinterSaltSection } from "@/components/site/WinterSalt";
 
 export const revalidate = 60;
 export const generateMetadata = () => pageMetadata("services");
@@ -66,6 +67,8 @@ export default async function ServicesPage() {
           </p>
         </div>
       </section>
+
+      <WinterSaltSection settings={settings} />
 
       <section className="section-rule py-14 sm:py-16" aria-labelledby="additional-heading">
         <div className="container-x">

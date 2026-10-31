@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
 
-const INTERESTS = ["Bin cleaning", "Window cleaning", "Driveway sealing", "Power & soft washing", "Billing question", "Other"];
+const INTERESTS = ["Bin cleaning", "Window cleaning", "Driveway sealing", "Power & soft washing", "Winter salt delivery", "Billing question", "Other"];
 
 type Errors = Record<string, string>;
 

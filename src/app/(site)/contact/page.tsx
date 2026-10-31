@@ -12,6 +12,7 @@ const INTEREST_PARAM: Record<string, string> = {
   "window-cleaning": "Window cleaning",
   "driveway-sealing": "Driveway sealing",
   "power-soft-washing": "Power & soft washing",
+  "winter-salt": "Winter salt delivery",
 };
 
 export default async function ContactPage({ searchParams }: { searchParams: Promise<{ service?: string }> }) {
